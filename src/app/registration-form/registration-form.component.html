@@ -1,0 +1,71 @@
+<div class="row">
+  <div class="col-12">
+    <form #registrationForm="ngForm">
+      <div class="form-group">
+        <label for="loginInput">Your name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="regnameInput"
+          name="regnameInput"
+          required
+          placeholder="Your name"
+          [(ngModel)]="regUser.name"
+          #regnameInput="ngModel"
+          [class]="'form-control ' + 
+          (regnameInput.invalid && (regnameInput.dirty || regnameInput.touched) ? 'is-invalid ' : '') + 
+          (regnameInput.valid && (regnameInput.dirty || regnameInput.touched) ? 'is-valid' : '')">
+      </div>
+      <div class="form-group">
+        <label for="loginInput">Login</label>
+        <input
+          type="text"
+          class="form-control"
+          id="regloginInput"
+          name="regloginInput"
+          required minlength="4"
+          placeholder="Login"
+          [(ngModel)]="regUser.login"
+          #regloginInput="ngModel"
+          [class]="'form-control ' + 
+          (regloginInput.invalid && (regloginInput.dirty || regloginInput.touched) ? 'is-invalid ' : '') + 
+          (regloginInput.valid && (regloginInput.dirty || regloginInput.touched) ? 'is-valid' : '')">
+        <div class="invalid-feedback" *ngIf="regloginInput.invalid && (regloginInput.dirty || regloginInput.touched)">
+          Minimal required length is 4.
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">Password</label>
+        <input
+          id="regpasswordInput"
+          name="regpasswordInput"
+          type="password" 
+          required minlength="8"
+          class="form-control"
+          placeholder="Password"
+          [(ngModel)]="regUser.password"
+          #regpasswordInput="ngModel"
+          [class]="'form-control ' + 
+          (regpasswordInput.invalid && (regpasswordInput.dirty || regpasswordInput.touched) ? 'is-invalid ' : '') + 
+          (regpasswordInput.valid && (regpasswordInput.dirty || regpasswordInput.touched) ? 'is-valid' : '')">
+        <div class="invalid-feedback" *ngIf="regpasswordInput.invalid && (regpasswordInput.dirty || regpasswordInput.touched)">
+          Minimal required length is 8.
+        </div>
+      </div>
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="regpasswordInput.invalid || success"
+        (click)="registerUser()"
+        style="margin-bottom: 20px;">
+        Register
+      </button>
+      <div class="alert alert-success" *ngIf="success">
+        User created! You can now log in.
+      </div>
+      <div class="alert alert-danger" *ngIf="error">
+        {{error}}
+      </div>
+    </form>
+  </div>
+</div>

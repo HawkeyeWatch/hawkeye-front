@@ -1,0 +1,63 @@
+<div class="row">
+    <div class="col-12">
+      <form #loginForm="ngForm">
+        <div class="form-group">
+          <label for="loginInput">Login</label>
+          <input
+            type="text"
+            class="form-control"
+            id="logloginInput"
+            name="logloginInput"
+            required minlength="4"
+            placeholder="Login"
+            [(ngModel)]="loginStr"
+            #logloginInput="ngModel"
+            [class]="'form-control ' + 
+            (logloginInput.invalid && (logloginInput.dirty || logloginInput.touched) ? 'is-invalid ' : '') + 
+            (logloginInput.valid && (logloginInput.dirty || logloginInput.touched) ? 'is-valid' : '')">
+          <div class="invalid-feedback" *ngIf="logloginInput.invalid && (logloginInput.dirty || logloginInput.touched)">
+            Minimal required length is 4.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPassword1">Password</label>
+          <input
+            id="logpasswordInput"
+            name="logpasswordInput"
+            type="password" 
+            required minlength="8"
+            class="form-control"
+            placeholder="Password"
+            [(ngModel)]="passwordStr"
+            #logpasswordInput="ngModel"
+            [class]="'form-control ' + 
+            (logpasswordInput.invalid && (logpasswordInput.dirty || logpasswordInput.touched) ? 'is-invalid ' : '') + 
+            (logpasswordInput.valid && (logpasswordInput.dirty || logpasswordInput.touched) ? 'is-valid' : '')">
+          <div class="invalid-feedback" *ngIf="logpasswordInput.invalid && (logpasswordInput.dirty || logpasswordInput.touched)">
+            Minimal required length is 8.
+          </div>
+        </div>
+        <div class="form-group form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="logRememberMeBox"
+            name="logRememberMeBox"
+            [(ngModel)]="extended"
+            #logRememberMeBox="ngModel">
+          <label class="form-check-label" for="exampleCheck1">Remember me</label>
+        </div>
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="loginForm.invalid || success"
+          (click)="loginUser()"
+          style="margin-bottom: 20px;">
+          Login
+        </button>
+        <div class="alert alert-danger" *ngIf="error">
+          Ooops! Not a match.
+        </div>
+      </form>
+    </div>
+  </div>
