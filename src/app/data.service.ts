@@ -6,6 +6,7 @@ import { User } from "./models/user";
 import { GlobalDataService } from './global.service';
 
 import 'rxjs/add/operator/map';
+import { LocalNode } from './models/node';
 
 @Injectable()
 export class DataService {
@@ -39,9 +40,19 @@ export class DataService {
         return res;
       });
   }
+
   public getNodes() {
     return this.http.get(this.baseUrl + '/api/user/nodes', this.jwt());
   }
+
+  public deleteNode(id: string) {
+    return this.http.delete(`${this.baseUrl}/api/node/${id}`, this.jwt());
+  }
+
+  public createNode(node: LocalNode) {
+    return this.http.post(this.baseUrl + `/api/node`, node, this.jwt());
+  }
+
   private jwt() {
     // create authorization header with jwt token
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -49,5 +60,4 @@ export class DataService {
       return {headers: new HttpHeaders({ 'Authorization': 'Bearer ' + currentUser.token })};
     }
   }
-
 }

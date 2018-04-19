@@ -4,6 +4,9 @@ import { FormsModule}   from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 
+import { AccordionModule } from 'ngx-bootstrap/accordion';
+import { ModalModule } from 'ngx-bootstrap/modal';
+
 import { DataService } from "./data.service";
 import { GlobalDataService } from "./global.service";
 import { LoginGuard } from "./login.guard";
@@ -42,7 +45,9 @@ const appRoutes: Routes = [
     FormsModule,
     TabsModule.forRoot(),
     RouterModule.forRoot(appRoutes),
-    HttpClientModule
+    HttpClientModule,
+    AccordionModule.forRoot(),
+    ModalModule.forRoot(),
   ],
   providers: [
     DataService,

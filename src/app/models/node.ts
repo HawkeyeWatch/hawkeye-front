@@ -1,8 +1,11 @@
 import { Deploy } from "./deploy";
 
 export class LocalNode {
-    _id: String;
-    title: String;
+    _id: string;
+    title: string;
     deploys: Deploy[];
-    jstpLogin: String;
+    jstpLogin: string;
+    isConnected: boolean;
+    link: string;
+    jstpPassword: string;
 }
