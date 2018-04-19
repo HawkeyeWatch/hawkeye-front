@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { RequestOptions, Headers,  } from '@angular/http';
+
 import { User } from "./models/user";
 import { GlobalDataService } from './global.service';
 
@@ -20,7 +22,7 @@ export class DataService {
     return this.http.post(this.baseUrl + '/api/user', user);
   }
 
-  login(login: string, password: string, extended: Boolean) {
+  public login(login: string, password: string, extended: Boolean) {
     const user: any = {};
     user.login = login;
     user.password = password;
@@ -36,6 +38,16 @@ export class DataService {
         }
         return res;
       });
+  }
+  public getNodes() {
+    return this.http.get(this.baseUrl + '/api/user/nodes', this.jwt());
+  }
+  private jwt() {
+    // create authorization header with jwt token
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser && currentUser.token) {
+      return {headers: new HttpHeaders({ 'Authorization': 'Bearer ' + currentUser.token })};
+    }
   }
 
 }
