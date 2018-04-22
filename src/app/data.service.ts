@@ -52,6 +52,9 @@ export class DataService {
   public createNode(node: LocalNode) {
     return this.http.post(this.baseUrl + `/api/node`, node, this.jwt());
   }
+  public addNode(node: LocalNode) {
+    return this.http.post(this.baseUrl + '/api/user/addnode', node, this.jwt())
+  }
 
   private jwt() {
     // create authorization header with jwt token

@@ -55,7 +55,9 @@ export class DashboardComponent implements OnInit {
   }
 
   openModal(m: TemplateRef<any>) {
+    this.newNode = new LocalNode();
     this.error = '';
+    this.creationDone = false;
     this.modalRef = this.modalService.show(m);
   }
 
@@ -75,8 +77,22 @@ export class DashboardComponent implements OnInit {
         this.error = err.error;
       });
   }
+  addNode() {
+    this.ds.addNode(this.newNode)
+      .subscribe((res: any) => {
+        if (res.error) {
+          return this.error = res.error;
+        }
+        if (res.success) {
+          console.log(res);
+          this.closeModal();
+          this.nodes.push(res.node);
+        }
+      }, (err) => {
+        this.error = err.error;
+      });
+  }
   closeModal() {
-    this.newNode = new LocalNode();
     this.creationDone = false;
     this.modalRef.hide();
   }
