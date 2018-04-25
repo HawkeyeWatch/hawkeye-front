@@ -10,7 +10,7 @@ import { LocalNode } from './models/node';
 
 @Injectable()
 export class DataService {
-  baseUrl = 'http://localhost:8080';
+  baseUrl = 'http://localhost:8081';
 
   constructor(
     private http: HttpClient,
@@ -46,7 +46,7 @@ export class DataService {
   }
 
   public deleteNode(id: string) {
-    return this.http.delete(`${this.baseUrl}/api/node/${id}`, this.jwt());
+    return this.http.delete(`${this.baseUrl}/api/node/delete/${id}`, this.jwt());
   }
 
   public createNode(node: LocalNode) {
@@ -54,6 +54,18 @@ export class DataService {
   }
   public addNode(node: LocalNode) {
     return this.http.post(this.baseUrl + '/api/user/addnode', node, this.jwt())
+  }
+  public getDeploy(nodeId, deployId) {
+    return this.http.post(this.baseUrl + '/api/node/deploy/get', {nodeId, deployId}, this.jwt());
+  }
+  public stopDeploy(nodeId, deployId) {
+    return this.http.post(this.baseUrl + '/api/node/deploy/stop', {nodeId, deployId}, this.jwt());
+  }
+  public startDeploy(nodeId, deployId) {
+    return this.http.post(this.baseUrl + '/api/node/deploy/start', {nodeId, deployId}, this.jwt());
+  }
+  public fetchDeploy(nodeId, deployId) {
+    return this.http.post(this.baseUrl + '/api/node/deploy/fetch', {nodeId, deployId}, this.jwt());
   }
 
   private jwt() {

@@ -5,6 +5,8 @@ import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 
 import { DataService } from "../data.service";
 import { LocalNode } from "../models/node";
+import { Deploy } from '../models/deploy';
+import { DeployState } from "../models/deploy-state";
 
 @Component({
   selector: 'app-dashboard',
@@ -63,7 +65,7 @@ export class DashboardComponent implements OnInit {
 
   createNode() {
     this.ds.createNode(this.newNode)
-      .subscribe((res: any) => {
+      .subscribe((res: {error: string, success: string, node: LocalNode}) => {
         if (res.error) {
           return this.error = res.error;
         }
@@ -79,7 +81,7 @@ export class DashboardComponent implements OnInit {
   }
   addNode() {
     this.ds.addNode(this.newNode)
-      .subscribe((res: any) => {
+      .subscribe((res: {error: string, success: string, node: LocalNode}) => {
         if (res.error) {
           return this.error = res.error;
         }
@@ -91,6 +93,47 @@ export class DashboardComponent implements OnInit {
       }, (err) => {
         this.error = err.error;
       });
+  }
+
+  updateDeployState(node: LocalNode, deploy: Deploy) {
+    this.ds.getDeploy(node._id, deploy._id)
+    .subscribe(
+      (res: Deploy) => {deploy.status = res.status.map(a => {a.lastState = DeployState[a.lastState];return a})},
+      (err) => {console.error(err)}
+    )
+  }
+
+  stopDeploy(node: LocalNode, deploy: Deploy) {
+    this.ds.stopDeploy(node._id, deploy._id)
+    .subscribe(
+      (res: Deploy) => {deploy.status = res.status.map(a => {a.lastState = DeployState[a.lastState];return a})},
+      (err) => {console.error(err)}
+    )
+  }
+
+  startDeploy(node: LocalNode, deploy: Deploy) {
+    this.ds.startDeploy(node._id, deploy._id)
+    .subscribe(
+      (res: Deploy) => {deploy.status = res.status.map(a => {a.lastState = DeployState[a.lastState];return a})},
+      (err) => {console.error(err)}
+    )
+  }
+
+  fetchDeploy(node: LocalNode, deploy: Deploy) {
+    this.ds.fetchDeploy(node._id, deploy._id)
+    .subscribe(
+      (res: Deploy) => {deploy.status = res.status.map(a => {a.lastState = DeployState[a.lastState];return a})},
+      (err) => {console.error(err)}
+    )
+  }
+
+  openNode(ind: number, event: any) {
+    if (event) {
+      const node: LocalNode = this.nodes[ind];
+      node.deploys.forEach((deploy) => {
+        this.updateDeployState(node, deploy);
+      });
+    }
   }
   closeModal() {
     this.creationDone = false;

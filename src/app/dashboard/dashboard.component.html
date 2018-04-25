@@ -15,7 +15,7 @@
     </div>
   </div>
   <accordion>
-    <accordion-group *ngFor="let node of nodes; index as $i">
+    <accordion-group *ngFor="let node of nodes; index as $i" (isOpenChange)="openNode($i, $event)">
       <div accordion-heading class="clearfix">
         {{node.title}}
         <span class="badge node-badge badge-secondary float-right pull-right">{{node.jstpLogin}}</span>
@@ -23,8 +23,53 @@
         <span class="badge node-badge badge-success float-right pull-right" *ngIf="node.isConnected">Online</span>
       </div>
       <div class="row">
-        <div class="col-12">
-          ohyeah
+        <div class="col-12" *ngFor="let deploy of node.deploys" style="margin-bottom: 10px">
+          <div class="card">
+            <div class="card-body">
+              <div class="card-title">{{deploy.title}}</div>
+              <div class="card-subtitle">
+                <span class="badge node-badge badge-danger"
+                  *ngIf="deploy.status ? !deploy.status[0]?.running : false">
+                  Not running
+                </span>
+                <span
+                  class="badge node-badge badge-success"
+                  *ngIf="deploy.status ? deploy.status[0]?.running : false"
+                  style="margin-bottom: 10px;">
+                  Running
+                </span>
+                {{deploy.status ? deploy.status[0].lastState : ''}}
+              </div>
+              <p class="card-text">
+                  Branch: <b>{{deploy.branch}}</b> at {{deploy.repo}}
+              </p>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <div class="btn-group">
+                  <button
+                    class="btn btn-danger"
+                    [disabled]="deploy.status ? !deploy.status[0]?.running : true"
+                    (click)="stopDeploy(node, deploy)">
+                    Stop
+                  </button>
+                  <button
+                    class="btn btn-primary"
+                    [disabled]="deploy.status ? !deploy.status[0]?.running : true"
+                    (click)="fetchDeploy(node, deploy)">
+                    Fetch
+                  </button>
+                  <button
+                    class="btn btn-success"
+                    [disabled]="deploy.status ? deploy.status[0]?.running : true"
+                    (click)="startDeploy(node, deploy)">
+                    Start
+                  </button>
+                </div>
+                <button class="btn btn-default float-right pull-right" (click)="updateDeployState(node, deploy)">Refresh</button>
+              </li>
+            </ul>
+          </div>
         </div>
         <div class="col-12">
           <button class="btn btn-danger pull-right float-right" (click)="openModalDelete(nodeDeleteModal, $i)">Delete node</button>

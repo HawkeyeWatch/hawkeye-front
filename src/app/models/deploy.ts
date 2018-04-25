@@ -4,4 +4,5 @@ export class Deploy {
     branch: String;
     title: String;
     token: String;
+    status: any;
 }
