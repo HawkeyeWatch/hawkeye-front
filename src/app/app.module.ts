@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 
 import { DataService } from "./data.service";
 import { GlobalDataService } from "./global.service";
@@ -48,6 +49,7 @@ const appRoutes: Routes = [
     HttpClientModule,
     AccordionModule.forRoot(),
     ModalModule.forRoot(),
+    ProgressbarModule.forRoot(),
   ],
   providers: [
     DataService,

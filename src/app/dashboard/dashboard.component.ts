@@ -17,9 +17,12 @@ export class DashboardComponent implements OnInit {
   modalRef: BsModalRef;
   nodes: LocalNode[];
   chosenNodeIndex: number;
+  chosenDeployIndex: number;
   error: string;
   newNode = new LocalNode();
+  newDeploy = new Deploy();
   creationDone = false;
+  cretionInProgress = false;
   hostname: string;
 
   constructor(
@@ -33,10 +36,11 @@ export class DashboardComponent implements OnInit {
   }
 
   getNodes() {
-    this.ds.getNodes().subscribe((nodes: LocalNode[]) => console.log(this.nodes = nodes));
+    this.ds.getNodes().subscribe((nodes: LocalNode[]) => this.nodes = nodes);
   }
 
-  openModalDelete(m: TemplateRef<any>, i: number) {
+  openModalSelectNode(m: TemplateRef<any>, i: number) {
+    this.newDeploy = new Deploy();
     this.chosenNodeIndex = i;
     this.modalRef = this.modalService.show(m);
   }
@@ -52,6 +56,7 @@ export class DashboardComponent implements OnInit {
           this.modalRef.hide();
         }
       }, (err) => {
+        console.log(err)
         this.error = err.error;
       });
   }
@@ -98,7 +103,10 @@ export class DashboardComponent implements OnInit {
   updateDeployState(node: LocalNode, deploy: Deploy) {
     this.ds.getDeploy(node._id, deploy._id)
     .subscribe(
-      (res: Deploy) => {deploy.status = res.status.map(a => {a.lastState = DeployState[a.lastState];return a})},
+      (res: Deploy) => {
+        deploy.status = res.status.map(a => {a.lastState = DeployState[a.lastState];return a});
+        console.log(deploy)
+      },
       (err) => {console.error(err)}
     )
   }
@@ -125,6 +133,53 @@ export class DashboardComponent implements OnInit {
       (res: Deploy) => {deploy.status = res.status.map(a => {a.lastState = DeployState[a.lastState];return a})},
       (err) => {console.error(err)}
     )
+  }
+
+  createDeploy() {
+    this.cretionInProgress = true;
+    this.ds.createDeploy(this.nodes[this.chosenNodeIndex]._id, this.newDeploy)
+    .subscribe(
+      (res: any) => {
+        if (res.error) {
+          return this.error = res.error;
+        }
+        this.nodes[this.chosenNodeIndex].deploys.push(res.deploy);
+        this.updateDeployState(this.nodes[this.chosenNodeIndex], res.deploy);
+        this.closeModal();
+        this.cretionInProgress = false;
+      }, (err: any) => {
+        if (err.error.error) {
+          if (err.error.error.error) {
+            this.error = err.error.error.error
+            return;
+          }
+          this.error = err.error.error;
+          return;
+        }
+        this.error = err.error;
+        this.cretionInProgress = false;
+      }
+    )
+  }
+
+  openModalSelectDeploy(m: TemplateRef<any>, i: number, ind: number) {
+    this.chosenNodeIndex = i;
+    this.chosenDeployIndex = ind;
+    this.modalRef = this.modalService.show(m);
+  }
+  deleteChosenDeploy() {
+    this.ds.deleteDeploy(
+      this.nodes[this.chosenNodeIndex]._id,
+      this.nodes[this.chosenNodeIndex].deploys[this.chosenDeployIndex]._id
+    )
+    .subscribe((res: any) => {
+      if (res.success) {
+        this.nodes[this.chosenNodeIndex].deploys.splice(this.chosenDeployIndex, 1);
+        this.closeModal();
+      } else {
+        this.error = res.error;
+      }
+    }, (err) => this.error = err.error);
   }
 
   openNode(ind: number, event: any) {

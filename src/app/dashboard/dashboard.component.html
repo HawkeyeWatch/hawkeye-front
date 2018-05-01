@@ -23,10 +23,13 @@
         <span class="badge node-badge badge-success float-right pull-right" *ngIf="node.isConnected">Online</span>
       </div>
       <div class="row">
-        <div class="col-12" *ngFor="let deploy of node.deploys" style="margin-bottom: 10px">
+        <div class="col-12" *ngFor="let deploy of node.deploys; index as $ind" style="margin-bottom: 10px">
           <div class="card">
             <div class="card-body">
-              <div class="card-title">{{deploy.title}}</div>
+              <div class="card-title">
+                {{deploy.title}}
+                <button class="btn btn-danger float-right pull-right" (click)="openModalSelectDeploy(deployDeleteModal, $i, $ind)">Delete deploy</button>
+              </div>
               <div class="card-subtitle">
                 <span class="badge node-badge badge-danger"
                   *ngIf="deploy.status ? !deploy.status[0]?.running : false">
@@ -43,6 +46,9 @@
               <p class="card-text">
                   Branch: <b>{{deploy.branch}}</b> at {{deploy.repo}}
               </p>
+              <div class="card-text">
+                <pre><samp>{{deploy.status ? deploy.status[0]?.lastDeployLog : undefined}}</samp></pre>
+              </div>
             </div>
             <ul class="list-group list-group-flush">
               <li class="list-group-item">
@@ -72,7 +78,8 @@
           </div>
         </div>
         <div class="col-12">
-          <button class="btn btn-danger pull-right float-right" (click)="openModalDelete(nodeDeleteModal, $i)">Delete node</button>
+          <button class="btn btn-success pull-left float-left" (click)="openModalSelectNode(deployCreationModal, $i)">Create a deploy</button>
+          <button class="btn btn-danger pull-right float-right" (click)="openModalSelectNode(nodeDeleteModal, $i)">Delete node</button>
         </div>
       </div>
     </accordion-group>
@@ -80,7 +87,7 @@
 </div>
 <ng-template #nodeDeleteModal>
   <div class="modal-header">
-    <h5 class="modal-title">Delete modal</h5>
+    <h5 class="modal-title">Delete node</h5>
     <button type="button" class="close" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -94,6 +101,24 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
     <button type="button" class="btn btn-danger" (click)="deleteChosenNode()">Yes, delete this node</button>
+  </div>
+</ng-template>
+<ng-template #deployDeleteModal>
+  <div class="modal-header">
+    <h5 class="modal-title">Delete deploy</h5>
+    <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>Are you sure?</p>
+    <div class="alert alert-danger" *ngIf="error">
+      {{error}}
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+    <button type="button" class="btn btn-danger" (click)="deleteChosenDeploy()">Yes, delete this deploy</button>
   </div>
 </ng-template>
 <ng-template #nodeAdditionModal>
@@ -211,3 +236,74 @@
     </div>
   </form>
 </ng-template>
+<ng-template #deployCreationModal>
+    <form #deployCreationForm="ngForm">
+      <div class="modal-header">
+        <h5 class="modal-title">Create a deploy on {{nodes[chosenNodeIndex].title}}</h5>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="titleCreationInput">Title</label>
+          <input
+            type="text"
+            class="form-control"
+            id="DeployTitleCreationInput"
+            name="DeployTitleCreationInput"
+            required
+            placeholder="Title"
+            [(ngModel)]="newDeploy.title"
+            #DeployTitleCreationInput="ngModel"
+            [class]="'form-control ' + 
+            (DeployTitleCreationInput.invalid && (DeployTitleCreationInput.dirty || DeployTitleCreationInput.touched) ? 'is-invalid ' : '') + 
+            (DeployTitleCreationInput.valid && (DeployTitleCreationInput.dirty || DeployTitleCreationInput.touched) ? 'is-valid' : '')">
+        </div>
+        <div class="form-group">
+          <label for="titleCreationInput">Repository link</label>
+          <input
+            type="text"
+            class="form-control"
+            id="DeployRepoCreationInput"
+            name="DeployRepoCreationInput"
+            required
+            placeholder="Link"
+            [(ngModel)]="newDeploy.repo"
+            #DeployRepoCreationInput="ngModel"
+            [class]="'form-control ' + 
+            (DeployRepoCreationInput.invalid && (DeployRepoCreationInput.dirty || DeployRepoCreationInput.touched) ? 'is-invalid ' : '') + 
+            (DeployRepoCreationInput.valid && (DeployRepoCreationInput.dirty || DeployRepoCreationInput.touched) ? 'is-valid' : '')">
+            <small>If your repo is private be sure to include an oauth token or login/password in the link. The way you do it depends on your git provider</small>
+        </div>
+        <div class="form-group">
+          <label for="titleCreationInput">Branch (defaults to master)</label>
+          <input
+            type="text"
+            class="form-control"
+            id="DeployBranchCreationInput"
+            name="DeployBranchCreationInput"
+            placeholder="Branch"
+            [(ngModel)]="newDeploy.branch"
+            #DeployBranchCreationInput="ngModel"
+            [class]="'form-control ' + 
+            (DeployBranchCreationInput.invalid && (DeployBranchCreationInput.dirty || DeployBranchCreationInput.touched) ? 'is-invalid ' : '') + 
+            (DeployBranchCreationInput.valid && (DeployBranchCreationInput.dirty || DeployBranchCreationInput.touched) ? 'is-valid' : '')">
+        </div>
+        <div class="alert alert-danger" *ngIf="error">
+          {{error}}
+        </div>
+        <progressbar *ngIf="cretionInProgress" max="100" [value]="100" type="success" [striped]="true" [animate]="true"><i>Creation in progress</i></progressbar>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="createDeploy()"
+          [disabled]="deployCreationForm.invalid || cretionInProgress">
+          Create
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+      </div>
+    </form>
+  </ng-template>

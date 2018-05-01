@@ -7,6 +7,7 @@ import { GlobalDataService } from './global.service';
 
 import 'rxjs/add/operator/map';
 import { LocalNode } from './models/node';
+import { Deploy } from './models/deploy';
 
 @Injectable()
 export class DataService {
@@ -66,6 +67,12 @@ export class DataService {
   }
   public fetchDeploy(nodeId, deployId) {
     return this.http.post(this.baseUrl + '/api/node/deploy/fetch', {nodeId, deployId}, this.jwt());
+  }
+  public deleteDeploy(nodeId, deployId) {
+    return this.http.post(this.baseUrl + '/api/node/deploy/delete', {nodeId, deployId}, this.jwt());
+  }
+  public createDeploy(nodeId, deploy: Deploy) {
+    return this.http.post(this.baseUrl + '/api/node/deploy', {nodeId, deploy}, this.jwt())
   }
 
   private jwt() {
