@@ -150,7 +150,7 @@ export class DashboardComponent implements OnInit {
       }, (err: any) => {
         if (err.error.error) {
           if (err.error.error.error) {
-            this.error = err.error.error.error
+            this.error = err.error.error.error;
             return;
           }
           this.error = err.error.error;

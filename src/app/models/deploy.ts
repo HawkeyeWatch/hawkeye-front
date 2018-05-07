@@ -5,4 +5,5 @@ export class Deploy {
     title: String;
     token: String;
     status: any;
+    webhookSecret: String;
 }
