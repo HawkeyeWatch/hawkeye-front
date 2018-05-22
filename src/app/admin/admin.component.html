@@ -1,0 +1,44 @@
+<div class="row" style="margin-bottom: 30px">
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      type="checkbox"
+      [ngModel]="registrationAllowed"
+      (click)="toggleRegistration()"
+      id="regAllowed"
+      name="regAllowed">
+    <label class="form-check-label" for="regAllowed">
+      Allow registration
+    </label>
+  </div>
+</div>
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Login</th>
+      <th>Admin privileges</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let user of users; index as $i">
+      <td>
+        {{user.name}}
+      </td>
+      <td>
+        {{user.login}}
+      </td>
+      <td>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            [ngModel]="user.isAdmin"
+            (click)="toggleUser($i)"
+            id="isAdmChkbx{{user._id}}"
+            name="isAdmChkbx{{user._id}}">
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>

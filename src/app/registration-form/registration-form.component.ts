@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { User } from "../models/user";
-import { DataService } from "../data.service";
+import { User } from '../models/user';
+import { DataService } from '../data.service';
 
 
 @Component({
@@ -23,7 +23,7 @@ export class RegistrationFormComponent implements OnInit {
 
   ngOnInit() {
   }
-  
+
   registerUser() {
     this.error = '';
     this.ds.register(this.regUser).subscribe(

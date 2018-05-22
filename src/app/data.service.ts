@@ -1,13 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { RequestOptions, Headers,  } from '@angular/http';
-
-import { User } from "./models/user";
-import { GlobalDataService } from './global.service';
+import { Router } from '@angular/router';
 
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
+import { Observable } from 'rxjs/Observable';
+
+import { User } from './models/user';
 import { LocalNode } from './models/node';
 import { Deploy } from './models/deploy';
+
+import { GlobalDataService } from './global.service';
 
 @Injectable()
 export class DataService {
@@ -16,6 +20,7 @@ export class DataService {
   constructor(
     private http: HttpClient,
     private gds: GlobalDataService,
+    private router: Router,
   ) {
 
   }
@@ -42,6 +47,13 @@ export class DataService {
       });
   }
 
+  public logout() {
+    this.gds.shareObj['loggedin'] = undefined;
+    this.gds.shareObj['currentUser'] = undefined;
+    localStorage.removeItem('currentUser');
+    this.router.navigate(['/login']);
+  }
+
   public getNodes() {
     return this.http.get(this.baseUrl + '/api/user/nodes', this.jwt());
   }
@@ -54,7 +66,7 @@ export class DataService {
     return this.http.post(this.baseUrl + `/api/node`, node, this.jwt());
   }
   public addNode(node: LocalNode) {
-    return this.http.post(this.baseUrl + '/api/user/addnode', node, this.jwt())
+    return this.http.post(this.baseUrl + '/api/user/addnode', node, this.jwt());
   }
   public getDeploy(nodeId, deployId) {
     return this.http.post(this.baseUrl + '/api/node/deploy/get', {nodeId, deployId}, this.jwt());
@@ -72,7 +84,23 @@ export class DataService {
     return this.http.post(this.baseUrl + '/api/node/deploy/delete', {nodeId, deployId}, this.jwt());
   }
   public createDeploy(nodeId, deploy: Deploy) {
-    return this.http.post(this.baseUrl + '/api/node/deploy', {nodeId, deploy}, this.jwt())
+    return this.http.post(this.baseUrl + '/api/node/deploy', {nodeId, deploy}, this.jwt());
+  }
+  public getUsers() {
+    return this.http.get(this.baseUrl + '/api/user/all', this.jwt());
+  }
+  public toggleRegistration() {
+    return this.http.post(this.baseUrl + '/user/togglereg', {}, this.jwt());
+  }
+  public registrationAllowed() {
+    return this.http.get(this.baseUrl + '/user/regallowed', this.jwt());
+  }
+  public toggleUser(userId) {
+    return this.http.post(this.baseUrl + '/user/promote', {userId}, this.jwt());
+  }
+
+  public getUser() {
+    return this.http.get(this.baseUrl + '/api/user', this.jwt());
   }
 
   private jwt() {

@@ -1,4 +1,4 @@
-import { Deploy } from "./deploy";
+import { Deploy } from './deploy';
 
 export class LocalNode {
     _id: string;

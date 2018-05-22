@@ -1,5 +1,7 @@
 export class User {
-    login: String;
-    password: String;
-    name: String;
+  _id: string;
+  login: string;
+  password: string;
+  name: string;
+  isAdmin: boolean;
 }

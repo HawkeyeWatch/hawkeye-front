@@ -1,8 +1,16 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand" [routerLink]="">GitWatcher</a>
+  <ul class="navbar-nav mr-auto">
+    <li class="nav-item active">
+      <a class="nav-link" *ngIf="gds.shareObj['loggedIn'] && gds.shareObj['currentUser']?.isAdmin" routerLink="/admin">Admin</a>
+    </li>
+    <li class="nav-item active">
+      <a class="nav-link" *ngIf="gds.shareObj['loggedIn']" routerLink="/dashboard">Dashboard</a>
+    </li>
+  </ul>
   <ul class="navbar-nav">
-      <li class="nav-item active">
-        <a class="nav-link" (click)="logout()" href>Logout</a>
-      </li>
-    </ul>
+    <li class="nav-item active">
+      <a class="nav-link" *ngIf="gds.shareObj['loggedIn']" (click)="logout()" href>Logout</a>
+    </li>
+  </ul>
 </nav>
